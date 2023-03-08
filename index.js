@@ -1,9 +1,10 @@
 const fs = require ('fs');
 const inquirer = require ('inquirer');
+// const Employee = require('./lib/Employee');
 const Engineer = require('./lib/Engineer');
 const Intern = require('./lib/Intern');
 const Manager = require('./lib/Manager');
-const generateHTML =
+const generateHTML = require ('./src/template.js');
 
 teamArray = [];
 
@@ -62,8 +63,8 @@ function managerQuestions () {
             }
         },
 
-    ]).then((answers) => {
-        const manager = new Manager(answers.name, answers.id, answers.email, answers.officeNumber);
+    ]).then((data) => {
+        const manager = new Manager(data.name, data.id, data.email, data.officeNumber);
         teamArray.push(manager)
         return selectEmployee();
     })
@@ -80,16 +81,16 @@ function selectEmployee(){
         }
         
     ])
-    .then((answers) =>{
-        if (answers.employeeType === 'Engineer'){
+    .then((data) =>{
+        if (data.employeeType === 'Engineer'){
             engineerQuestions();
         }
-        else if (answers.employeeType === 'Intern'){
+        else if (data.employeeType === 'Intern'){
             internQuestions();
         }
-        // else {
-
-        // }
+       else {
+           writeFile();
+         }
     }
         )
 }
@@ -148,8 +149,8 @@ function engineerQuestions (){
                 }
             }
         },
-    ]).then((answers) => {
-        const engineer = new Engineer(answers.name, answers.id, answers.email, answers.github);
+    ]).then((data) => {
+        const engineer = new Engineer(data.name, data.id, data.email, data.github);
         teamArray.push(engineer)
         return selectEmployee();
     })
@@ -210,22 +211,33 @@ function internQuestions (){
             }
         },
     ])
-    .then((answers) => {
-        const intern = new Intern(answers.name, answers.id, answers.email, answers.school);
+    .then((data) => {
+        const intern = new Intern(data.name, data.id, data.email, data.school);
         teamArray.push(intern)
         return selectEmployee();
     })
 } 
 
-// function (){
-//     const  = (teamArray);
-
-//     fs.writeFile('index.html', team, (error)=>{
-//         if (error){
-//             console.log(error)
-//         }
-//     })
-// } 
 
 
-managerQuestions();
+const writeFile = data =>{
+    fs.writeFile('./dist/team.html', data, err => {
+        if (err){
+            console.error(err);
+        }else {
+            console.log("team page created and available in dist folder")
+        }
+    })
+}
+
+
+ managerQuestions()
+    .then(selectEmployee)
+    .then(teamArray => {
+        return generateHTML(teamArray);
+    })
+    .then(team => {
+        return writeFile(team);
+    }) .catch(err =>{
+        console.log(err);
+    }); 

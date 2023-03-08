@@ -5,7 +5,8 @@
   "main": "index.js",
   "directories": {
     "lib": "lib",
-    "test": "tests"
+    "test": "tests",
+    "src": "src"
   },
   "scripts": {
     "test": "jest"
@@ -24,6 +25,7 @@
   },
   "homepage": "https://github.com/anafede/team-profile-generator#readme",
   "dependencies": {
-    "inquirer": "^8.2.4"
+    "inquirer": "^8.2.4",
+    "require": "^0.4.4"
   }
 }
